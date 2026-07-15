@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#2a1714">
+    <title>The Summit of Ambition — A Dagger Revelation</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main id="scene" class="scene" aria-label="A slow panoramic ascent across the Daggers' summit of ambition">
+      <div id="world" class="world" aria-hidden="true">
+        <div id="look" class="look-layer">
+          <img
+            class="summit-plate"
+            src="dagger-summit-panorama.png"
+            alt=""
+            draggable="false"
+            decoding="sync"
+          >
+
+          <div class="dagger-aura">
+            <span class="dagger-aura__slash dagger-aura__slash--left"></span>
+            <span class="dagger-aura__slash dagger-aura__slash--right"></span>
+            <span class="dagger-aura__blade"></span>
+          </div>
+
+          <div class="sun-wash"></div>
+        </div>
+      </div>
+
+      <div class="atmosphere atmosphere--far" aria-hidden="true"></div>
+      <div class="atmosphere atmosphere--near" aria-hidden="true"></div>
+      <div class="light-sweep" aria-hidden="true"></div>
+      <canvas id="motes" class="motes" aria-hidden="true"></canvas>
+
+      <div class="birds" aria-hidden="true">
+        <i></i><i></i><i></i><i></i>
+      </div>
+
+      <header class="masthead">
+        <div class="sigil" aria-hidden="true"><span></span></div>
+        <p>Ludus Fati · The Dagger Revelation</p>
+      </header>
+
+      <section class="title-card" aria-labelledby="summit-title">
+        <p class="title-card__kicker">Every height has a price</p>
+        <h1 id="summit-title">The Summit<br>of Ambition</h1>
+        <p class="title-card__epigraph">Rise. Command. Endure.</p>
+      </section>
+
+      <figure class="quote-card">
+        <blockquote>“The strong do what they can and the weak do what they must”</blockquote>
+        <figcaption>— Thucydides</figcaption>
+      </figure>
+
+      <div class="journey" aria-hidden="true">
+        <span>Lower Bastions</span>
+        <div class="journey__track"><i></i></div>
+        <span>Eastern Ravines</span>
+      </div>
+
+      <div class="controls">
+        <button id="toggle-motion" class="control" type="button" aria-pressed="false">
+          <svg class="control__pause" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 5h3v14H7zM14 5h3v14h-3z"></path>
+          </svg>
+          <svg class="control__play" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m8 5 11 7-11 7z"></path>
+          </svg>
+          <span>Pause journey</span>
+        </button>
+        <button id="restart-motion" class="control control--icon" type="button" aria-label="Restart the panoramic journey">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 8a8 8 0 1 0 1 7M19 4v4h-4"></path>
+          </svg>
+        </button>
+      </div>
+
+      <p id="motion-status" class="sr-only" aria-live="polite">The panoramic journey is playing.</p>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="frame" aria-hidden="true"></div>
+    </main>
+
+    <script src="animation.js"></script>
+  </body>
+</html>

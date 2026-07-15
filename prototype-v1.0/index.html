@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ludus Fati Prototype 1.0</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main id="menu-screen" class="screen menu-screen">
+      <section class="menu-panel" aria-labelledby="game-title">
+        <p class="eyebrow">Prototype 1.0 release</p>
+        <h1 id="game-title">Ludus Fati</h1>
+        <p class="intro">
+          Walk the ribbon toward the final Revelation. Gather ideas, lose certainties,
+          and answer each dilemma with the strongest card you can bear to spend.
+        </p>
+        <form id="account-form" class="account-form">
+          <label for="player-name">Seeker name</label>
+          <input id="player-name" name="player-name" type="text" maxlength="32" autocomplete="nickname" placeholder="Enter your name">
+          <p id="account-message">A local account will be created for this name. The game autosaves after Dilemmas.</p>
+        </form>
+        <div class="menu-actions">
+          <button id="play-button" class="primary-action" type="button">Play</button>
+          <button id="quit-button" class="secondary-action" type="button">Quit</button>
+        </div>
+      </section>
+    </main>
+
+    <main id="quit-screen" class="screen menu-screen hidden">
+      <section class="menu-panel quiet" aria-labelledby="quit-title">
+        <p class="eyebrow">The portico is closed</p>
+        <h1 id="quit-title">Silence</h1>
+        <p class="intro">The seeker turns away before the first step.</p>
+        <div class="menu-actions">
+          <button id="return-button" class="primary-action" type="button">Return</button>
+        </div>
+      </section>
+    </main>
+
+    <main id="game-screen" class="screen game-screen theatre-screen lf-game-screen hidden">
+      <section class="lf-table rich-theatre" aria-label="Ludus Fati game table">
+        <header class="lf-topbar">
+          <div class="lf-title-lockup" aria-label="Game title">
+            <h1>Ludus Fati</h1>
+          </div>
+
+          <div class="lf-branch-status" aria-label="Current branch">
+            <span>Branch</span>
+            <strong id="branch-readout">I</strong>
+          </div>
+
+          <div class="lf-step-status" aria-label="Current step">
+            <span>Step</span>
+            <strong id="position-readout">0 / 46</strong>
+          </div>
+
+          <section class="lf-score-strip" aria-label="Combined suit scores">
+            <div id="suit-totals" class="suit-totals score-constellation"></div>
+          </section>
+
+          <nav class="theatre-actions lf-actions" aria-label="Game panels">
+            <button id="codex-button" class="icon-action" type="button">
+              <svg class="lf-action-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <path d="M10 12c6-2 10-1 14 2v24c-4-3-8-4-14-2z"></path>
+                <path d="M38 12c-6-2-10-1-14 2v24c4-3 8-4 14-2z"></path>
+                <path d="M24 14v24"></path>
+              </svg>
+              <strong>Codex</strong>
+            </button>
+            <button id="scores-button" class="icon-action" type="button">
+              <svg class="lf-action-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <path d="M12 36V22"></path>
+                <path d="M24 36V12"></path>
+                <path d="M36 36V18"></path>
+                <path d="M8 36h32"></path>
+              </svg>
+              <strong>Scores</strong>
+            </button>
+            <button id="options-button" class="icon-action" type="button">
+              <svg class="lf-action-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <circle cx="24" cy="24" r="6"></circle>
+                <path d="M24 8v6M24 34v6M8 24h6M34 24h6M12.7 12.7l4.2 4.2M31.1 31.1l4.2 4.2M35.3 12.7l-4.2 4.2M16.9 31.1l-4.2 4.2"></path>
+              </svg>
+              <strong>Options</strong>
+            </button>
+          </nav>
+        </header>
+
+        <section class="lf-playfield">
+          <aside class="ribbon-spine lf-ribbon-panel" aria-label="Ribbon progress">
+            <div class="spine-heading">
+              <strong>The Ribbon</strong>
+            </div>
+            <div id="ribbon" class="ribbon theatre-ribbon lf-ribbon"></div>
+          </aside>
+
+          <section class="event-panel theatre-stage lf-stage" aria-live="polite">
+            <div class="lf-stage-field" aria-hidden="true"></div>
+            <div class="stage-inner">
+              <div class="stage-copy">
+                <figure id="event-card" class="event-card hidden" aria-hidden="true">
+                  <img id="event-card-image" alt="" loading="lazy" decoding="async">
+                  <figcaption id="event-card-caption"></figcaption>
+                </figure>
+                <div class="stage-text">
+                  <p id="event-kicker" class="eyebrow">Awaiting the first step</p>
+                  <h2 id="event-title">The First Portico</h2>
+                  <p id="event-body">
+                    Press Step to enter the philosophical landscape. The cells ahead are hidden,
+                    except for four Dilemma checkpoints and the final Revelation.
+                  </p>
+                </div>
+                <div class="step-row">
+                  <button id="step-button" class="primary-action threshold-action" type="button">
+                    <span class="threshold-roman">Gradvs Proximvs</span>
+                    <span class="threshold-label">Take the Next Step</span>
+                    <span class="threshold-motto">Per Fatvm Ad Lvcem</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <section class="hand-panel theatre-hand-panel lf-hand-carousel" aria-label="Hand carousel">
+              <button id="hand-prev-button" class="hand-nav-button" type="button" aria-label="Previous hand cards">&lt;</button>
+              <div class="hand-window">
+                <div id="hand" class="hand"></div>
+                <div class="hand-meta">
+                  <span id="hand-window-readout">0 of 0</span>
+                  <div class="segmented-control" role="group" aria-label="Sort cards">
+                    <button id="sort-rank-button" class="segment-button" type="button" aria-pressed="false">Rank</button>
+                    <button id="sort-suit-button" class="segment-button" type="button" aria-pressed="true">Suit</button>
+                  </div>
+                </div>
+              </div>
+              <button id="hand-next-button" class="hand-nav-button" type="button" aria-label="Next hand cards">&gt;</button>
+            </section>
+          </section>
+
+          <aside class="synthesis-dock lf-synthesis-dock">
+            <button id="synthesis-toggle" class="synthesis-toggle" type="button" aria-expanded="false" aria-controls="synthesis-panel">
+              <span id="synthesis-count" class="synthesis-count">0</span>
+              <span class="synthesis-glyph" aria-hidden="true">&#9651;</span>
+              <strong>Synthesis</strong>
+            </button>
+            <section id="synthesis-panel" class="synthesis-panel hidden" aria-label="Synthesis">
+              <div class="panel-heading">
+                <h2>Synthesis</h2>
+                <span id="merge-count">No merges</span>
+              </div>
+              <div id="merge-panel" class="merge-panel"></div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="machine-status lf-hidden-hooks" aria-hidden="true">
+          <div><span>Dilemmas</span><strong id="dilemmas-readout">0 / 5</strong></div>
+          <div><span>Hand</span><strong id="hand-readout">0 / 15</strong></div>
+          <div><span>Actions</span><strong id="steps-readout">0</strong></div>
+          <div><span>Player</span><strong id="player-readout">None</strong></div>
+          <div><span>Dilemma Save</span><strong id="save-readout">Not saved</strong></div>
+        </section>
+
+        <section class="record-panel lf-hidden-hooks" aria-hidden="true">
+          <div class="panel-heading">
+            <h2>Record</h2>
+            <span>Hidden</span>
+          </div>
+          <ol id="log" class="log"></ol>
+          <button id="log-toggle" class="record-toggle" type="button" aria-expanded="false">Unfold Complete Record</button>
+        </section>
+      </section>
+    </main>
+
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div id="modal-panel" class="modal-panel">
+        <figure id="modal-art" class="modal-art" aria-label="Cell image">
+          <img id="modal-art-image" alt="" decoding="async">
+          <iframe id="modal-art-frame" class="modal-art-frame hidden" title="" loading="lazy"></iframe>
+          <div id="modal-art-fallback" class="modal-art-fallback" aria-hidden="true">
+            <span id="modal-art-symbol">STEP</span>
+          </div>
+          <figcaption id="modal-art-caption"></figcaption>
+        </figure>
+        <div class="modal-copy">
+          <p id="modal-kicker" class="eyebrow">Choice</p>
+          <h2 id="modal-title">Dilemma</h2>
+          <p id="modal-body"></p>
+          <div id="modal-extra" class="modal-extra"></div>
+          <div id="modal-actions" class="modal-actions"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="card-viewer" class="card-viewer hidden" role="dialog" aria-modal="true" aria-labelledby="card-viewer-title">
+      <div id="card-viewer-frame" class="card-viewer-frame">
+        <div id="card-viewer-card" class="card-viewer-card"></div>
+        <aside class="card-viewer-copy">
+          <p id="card-viewer-kicker" class="eyebrow">Ranked suit card</p>
+          <h2 id="card-viewer-title">Card</h2>
+          <p id="card-viewer-description" class="card-viewer-description"></p>
+          <p class="card-viewer-hint">Click the card, the darkened background, or press Escape to close.</p>
+        </aside>
+      </div>
+    </div>
+
+    <div id="codex-overlay" class="codex-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="codex-title">
+      <section class="codex-panel codex-book">
+        <header class="codex-header">
+          <div>
+            <p class="eyebrow">Living Reference</p>
+            <h2 id="codex-title">Codex</h2>
+          </div>
+          <button id="codex-close-button" class="secondary-action compact" type="button">Close</button>
+        </header>
+        <nav class="codex-tabs" aria-label="Codex sections">
+          <button class="codex-tab" type="button" data-codex-tab="rules" aria-pressed="true">Rules</button>
+          <button class="codex-tab" type="button" data-codex-tab="suits" aria-pressed="false">Suits</button>
+          <button class="codex-tab" type="button" data-codex-tab="discovered" aria-pressed="false">Discovered</button>
+          <button class="codex-tab" type="button" data-codex-tab="branches" aria-pressed="false">Branches</button>
+        </nav>
+        <div id="codex-content" class="codex-content"></div>
+      </section>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>

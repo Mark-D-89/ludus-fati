@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#040507">
+    <title>The Eternal Depth — An Abyss Revelation</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main id="scene" class="scene" aria-label="A slow panoramic journey across the eternal depth of the Abyss">
+      <div id="world" class="world" aria-hidden="true">
+        <div id="look" class="look-layer">
+          <img
+            class="abyss-plate"
+            src="abyss-eternal-depth-panorama.png"
+            alt=""
+            draggable="false"
+            decoding="sync"
+          >
+
+          <div class="eclipse-aura">
+            <span class="eclipse-aura__ring eclipse-aura__ring--outer"></span>
+            <span class="eclipse-aura__ring eclipse-aura__ring--inner"></span>
+            <span class="eclipse-aura__core"></span>
+          </div>
+
+          <div class="sun-wash"></div>
+        </div>
+      </div>
+
+      <div class="atmosphere atmosphere--far" aria-hidden="true"></div>
+      <div class="atmosphere atmosphere--near" aria-hidden="true"></div>
+      <div class="light-sweep" aria-hidden="true"></div>
+      <canvas id="motes" class="motes" aria-hidden="true"></canvas>
+
+      <div class="birds" aria-hidden="true">
+        <i></i><i></i><i></i><i></i>
+      </div>
+
+      <header class="masthead">
+        <div class="sigil" aria-hidden="true"><span></span></div>
+        <p>Ludus Fati · The Abyss Revelation</p>
+      </header>
+
+      <section class="title-card" aria-labelledby="abyss-title">
+        <p class="title-card__kicker">Beyond the last certainty</p>
+        <h1 id="abyss-title">The Eternal<br>Depth</h1>
+        <p class="title-card__epigraph">The horizon opened. Nothing answered.</p>
+      </section>
+
+      <figure class="quote-card">
+        <blockquote>“We live on a placid island of ignorance in the midst of black seas of infinity”</blockquote>
+        <figcaption>— H. P. Lovecraft</figcaption>
+      </figure>
+
+      <div class="journey" aria-hidden="true">
+        <span>Last Observatory</span>
+        <div class="journey__track"><i></i></div>
+        <span>Broken Causeway</span>
+      </div>
+
+      <div class="controls">
+        <button id="toggle-motion" class="control" type="button" aria-pressed="false">
+          <svg class="control__pause" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 5h3v14H7zM14 5h3v14h-3z"></path>
+          </svg>
+          <svg class="control__play" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m8 5 11 7-11 7z"></path>
+          </svg>
+          <span>Pause journey</span>
+        </button>
+        <button id="restart-motion" class="control control--icon" type="button" aria-label="Restart the panoramic journey">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 8a8 8 0 1 0 1 7M19 4v4h-4"></path>
+          </svg>
+        </button>
+      </div>
+
+      <p id="motion-status" class="sr-only" aria-live="polite">The panoramic journey is playing.</p>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="frame" aria-hidden="true"></div>
+    </main>
+
+    <script src="animation.js"></script>
+  </body>
+</html>

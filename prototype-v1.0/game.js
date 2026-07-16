@@ -1213,6 +1213,7 @@ const REVELATION_FAILURE_ANIMATION = {
 const SAVE_VERSION = "1.0";
 const SAVE_PREFIX = "ludus-fati.v1.0.save.";
 const ACCOUNT_INDEX_KEY = "ludus-fati.v1.0.accounts";
+const TUTORIAL_KEY_PREFIX = "ludus-fati.v1.0.tutorial-seen.";
 const MODAL_COPY_DELAY_MS = 560;
 const MODAL_TYPE_INTERVAL_MS = 14;
 const MODAL_TYPE_CHARS_PER_TICK = 2;
@@ -1321,7 +1322,11 @@ const els = {
   codexOverlay: document.querySelector("#codex-overlay"),
   codexCloseButton: document.querySelector("#codex-close-button"),
   codexTabs: Array.from(document.querySelectorAll(".codex-tab")),
-  codexContent: document.querySelector("#codex-content")
+  codexContent: document.querySelector("#codex-content"),
+  tutorialOverlay: document.querySelector("#tutorial-overlay"),
+  tutorialLines: document.querySelector("#tutorial-lines"),
+  tutorialHighlights: document.querySelector("#tutorial-highlights"),
+  tutorialCallouts: Array.from(document.querySelectorAll(".tutorial-callout"))
 };
 
 function createRng(seed) {
@@ -1409,6 +1414,67 @@ function storage() {
   }
 }
 
+function tutorialKeyForAccount(accountKey) {
+  return `${TUTORIAL_KEY_PREFIX}${accountKey}`;
+}
+
+function hasSeenTutorial(accountKey) {
+  const store = storage();
+  return Boolean(store && store.getItem(tutorialKeyForAccount(accountKey)) === "true");
+}
+
+function positionTutorialPointers() {
+  if (!els.tutorialOverlay || els.tutorialOverlay.classList.contains("hidden")) return;
+
+  const overlayRect = els.tutorialOverlay.getBoundingClientRect();
+  const lines = [];
+  els.tutorialHighlights.replaceChildren();
+
+  els.tutorialCallouts.forEach((callout) => {
+    const target = document.querySelector(callout.dataset.target);
+    if (!target) return;
+
+    const targetRect = target.getBoundingClientRect();
+    const calloutRect = callout.getBoundingClientRect();
+    const targetX = targetRect.left + targetRect.width / 2 - overlayRect.left;
+    const targetY = targetRect.top + targetRect.height / 2 - overlayRect.top;
+    const calloutX = calloutRect.left + calloutRect.width / 2 - overlayRect.left;
+    const calloutY = calloutRect.top + calloutRect.height / 2 - overlayRect.top;
+    const dx = targetX - calloutX;
+    const dy = targetY - calloutY;
+    const startX = calloutX + (Math.abs(dx) > Math.abs(dy) ? Math.sign(dx) * calloutRect.width / 2 : 0);
+    const startY = calloutY + (Math.abs(dy) >= Math.abs(dx) ? Math.sign(dy) * calloutRect.height / 2 : 0);
+
+    lines.push(`<line x1="${startX}" y1="${startY}" x2="${targetX}" y2="${targetY}" />`);
+    const highlight = document.createElement("span");
+    highlight.className = "tutorial-highlight";
+    highlight.style.left = `${targetRect.left - overlayRect.left - 6}px`;
+    highlight.style.top = `${targetRect.top - overlayRect.top - 6}px`;
+    highlight.style.width = `${targetRect.width + 12}px`;
+    highlight.style.height = `${targetRect.height + 12}px`;
+    els.tutorialHighlights.appendChild(highlight);
+  });
+
+  els.tutorialLines.setAttribute("viewBox", `0 0 ${overlayRect.width} ${overlayRect.height}`);
+  els.tutorialLines.innerHTML = lines.join("");
+}
+
+function showTutorialIfNeeded() {
+  if (!els.tutorialOverlay || hasSeenTutorial(state.accountKey)) return;
+  els.tutorialOverlay.classList.remove("hidden");
+  document.body.classList.add("tutorial-open");
+  requestAnimationFrame(positionTutorialPointers);
+}
+
+function closeTutorial() {
+  if (!els.tutorialOverlay || els.tutorialOverlay.classList.contains("hidden")) return;
+  const store = storage();
+  if (store) store.setItem(tutorialKeyForAccount(state.accountKey), "true");
+  els.tutorialOverlay.classList.add("hidden");
+  document.body.classList.remove("tutorial-open");
+  els.stepButton.focus();
+}
+
 function rememberAccount(playerName, accountKey) {
   const store = storage();
   if (!store) return;
@@ -1475,6 +1541,7 @@ function startGame(playerName = state.playerName || normalizePlayerName(els.play
   closeModal();
   showScreen("game");
   render();
+  showTutorialIfNeeded();
 }
 
 function serializeGame() {
@@ -4079,7 +4146,15 @@ els.codexOverlay.addEventListener("click", (event) => {
 els.codexTabs.forEach((tab) => {
   tab.addEventListener("click", () => setCodexTab(tab.dataset.codexTab));
 });
+if (els.tutorialOverlay) {
+  els.tutorialOverlay.addEventListener("click", closeTutorial);
+  window.addEventListener("resize", positionTutorialPointers);
+}
 document.addEventListener("keydown", (event) => {
+  if (!els.tutorialOverlay?.classList.contains("hidden")) {
+    if (event.key === "Enter" || event.key === " " || event.key === "Escape") closeTutorial();
+    return;
+  }
   if (event.key !== "Escape") return;
   if (!els.cardViewer.classList.contains("hidden")) {
     closeCardViewer();

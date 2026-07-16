@@ -6,9 +6,9 @@ Ludus Fati is a solo philosophical card game prototype. The player walks a ribbo
 
 Open `index.html` from the repository root, or open `prototype-v1.0/index.html` directly.
 
-The repository root page redirects to the playable 1.0 release on GitLab Pages.
+The repository root page redirects to the playable 1.0 release on GitHub Pages.
 
-Playable GitLab Pages URL: [Ludus Fati 1.0](https://mark-dzhumaylo-ludusfati-3fd90f.pages.git.ringcentral.com/). The deployment uses GitLab access control, so RingCentral GitLab authentication is required.
+Playable game: [Ludus Fati 1.0](https://mark-d-89.github.io/ludus-fati/).
 
 ## Setup And Run
 

@@ -172,6 +172,51 @@
       </section>
     </main>
 
+    <div id="tutorial-overlay" class="tutorial-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="tutorial-title" aria-describedby="tutorial-rules">
+      <svg id="tutorial-lines" class="tutorial-lines" aria-hidden="true"></svg>
+      <div id="tutorial-highlights" aria-hidden="true"></div>
+
+      <section class="tutorial-rules-card">
+        <p class="eyebrow">Before the first step</p>
+        <h2 id="tutorial-title">How to walk the Ribbon</h2>
+        <p id="tutorial-rules">
+          Take steps to reveal encounters and gather cards. At each Dilemma, play a card
+          strong enough to meet its threshold. Reach the final Revelation with a leading
+          suit above 34 and its Ace to complete the journey.
+        </p>
+        <span>Click anywhere to begin</span>
+      </section>
+
+      <aside class="tutorial-callout tutorial-callout-ribbon" data-target=".lf-ribbon-panel">
+        <strong>The Ribbon</strong>
+        <span>Your position, revealed cells, and coming Dilemmas.</span>
+      </aside>
+      <aside class="tutorial-callout tutorial-callout-status" data-target=".lf-step-status">
+        <strong>Journey status</strong>
+        <span>Your current branch and distance to the Revelation.</span>
+      </aside>
+      <aside class="tutorial-callout tutorial-callout-scores" data-target=".lf-score-strip">
+        <strong>Suit scores</strong>
+        <span>The combined strength of the cards you hold.</span>
+      </aside>
+      <aside class="tutorial-callout tutorial-callout-codex" data-target="#codex-button">
+        <strong>Codex &amp; options</strong>
+        <span>Review rules, discoveries, scores, and game options.</span>
+      </aside>
+      <aside class="tutorial-callout tutorial-callout-step" data-target="#step-button">
+        <strong>Take the next step</strong>
+        <span>Advance along the Ribbon and reveal what waits ahead.</span>
+      </aside>
+      <aside class="tutorial-callout tutorial-callout-hand" data-target=".lf-hand-carousel">
+        <strong>Your hand</strong>
+        <span>Inspect and sort cards; play them when a choice demands it.</span>
+      </aside>
+      <aside class="tutorial-callout tutorial-callout-synthesis" data-target="#synthesis-toggle">
+        <strong>Synthesis</strong>
+        <span>Merge matching cards into a stronger certainty.</span>
+      </aside>
+    </div>
+
     <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div id="modal-panel" class="modal-panel">
         <figure id="modal-art" class="modal-art" aria-label="Cell image">

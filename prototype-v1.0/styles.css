@@ -36,6 +36,12 @@ button {
   font: inherit;
 }
 
+.gallery-link {
+  display: inline-grid;
+  place-items: center;
+  text-decoration: none;
+}
+
 .hidden {
   display: none !important;
 }

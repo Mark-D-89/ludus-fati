@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Gallery · Ludus Fati</title>
+  <link rel="stylesheet" href="gallery.css">
+</head>
+<body>
+  <header class="masthead">
+    <a class="back" href="../">← Return to the game</a>
+    <p class="eyebrow">The illustrated archive</p>
+    <h1>Ludus Fati</h1>
+    <p class="lede">A visual index of the cards encountered along the Ribbon.</p>
+  </header>
+
+  <main>
+    <section class="filters" aria-label="Gallery filters">
+      <div>
+        <span class="filter-label">Card type</span>
+        <div id="type-filters" class="filter-row"></div>
+      </div>
+      <div>
+        <span class="filter-label">Suit</span>
+        <div id="suit-filters" class="filter-row"></div>
+      </div>
+      <p id="result-count" class="result-count" aria-live="polite"></p>
+    </section>
+    <div id="gallery" class="gallery"></div>
+    <p id="empty-state" class="empty-state" hidden>No cards answer to this combination.</p>
+  </main>
+
+  <dialog id="viewer">
+    <button class="close" aria-label="Close image">×</button>
+    <button class="viewer-nav previous" aria-label="Previous card">←</button>
+    <figure>
+      <img id="viewer-image" alt="">
+      <figcaption><span id="viewer-meta"></span><strong id="viewer-title"></strong><p id="viewer-description"></p></figcaption>
+    </figure>
+    <button class="viewer-nav next" aria-label="Next card">→</button>
+  </dialog>
+  <script src="gallery.js"></script>
+</body>
+</html>

@@ -33,36 +33,77 @@ const losses={orbs:["chaotic-thoughts","mockery-of-ideals","the-corrupted-forum"
 const dilemmas=["the-trolley-problem","the-footbridge-variation","the-murderer-at-the-door","the-ticking-bomb-dilemma","the-lifeboat-dilemma","the-surgeon-and-the-five-patients","the-prisoners-dilemma","the-tragedy-of-the-commons","the-dirty-hands-dilemma","sophies-choice","the-ones-who-walk-away-from-omelas","the-experience-machine","the-memory-erasure-dilemma","the-just-war-dilemma","the-whistle-blower-dilemma","the-mercy-killing-dilemma","the-unjust-law-dilemma","the-last-copy-dilemma","the-violinist","rokos-basilisk"];dilemmas.forEach((name,i)=>add("Dilemmas","neutral",titleCase(name),`imagegen/dilemma-stop-motion-series/${String(i+1).padStart(2,"0")}-${name}.png`));
 const dynamics={Dreams:["the-dream-of-balanced-scales","the-portico-dream","the-fountain-under-sleep","the-trial-without-judges"],Echoes:["the-second-footstep","the-mirror-of-yesterday","a-voice-returning"]};Object.entries(dynamics).forEach(([type,names])=>names.forEach(name=>add(type,"neutral",titleCase(name),`imagegen/encounters-v0.3/${type.toLowerCase().replace(/s$/,"")}/dynamic/${name}.png`)));
 
-const suitLore = {
-  orbs: "It draws the seeker toward reason, reform, and the unfinished architecture of a better world.",
-  daggers: "It teaches that every choice has an edge, and that power always remembers who dared to wield it.",
-  abysses: "It looks past consolation into the silence beneath meaning, where certainty is stripped bare.",
-  candles: "It keeps faith with endurance, duty, and the small warmth that survives an indifferent night.",
-  neutral: "It belongs to the Ribbon itself, changing the journey without swearing allegiance to any doctrine."
-};
-const familyLore = {
-  "Ranked cards": card => `${card.title} embodies ${card.rank.toLowerCase()} of the ${titleCase(card.suit)}. ${suitLore[card.suit]}`,
-  Sages: card => `${card.title} waits beside the path, offering hard-won counsel without promising that wisdom will be painless. ${suitLore[card.suit]}`,
-  Strangers: card => `${card.title} crosses into the game from another story, carrying a choice that tests the seeker's convictions. ${suitLore[card.suit]}`,
-  Relics: card => `${card.title} is an old instrument of doctrine, worn by hands that once mistook belief for certainty. ${suitLore[card.suit]}`,
-  Texts: card => `${card.title} preserves an argument whose ink seems to alter whenever the reader's loyalties change. ${suitLore[card.suit]}`,
-  Temptations: card => `${card.title} offers strength immediately and names its price only after desire has begun to answer. ${suitLore[card.suit]}`,
-  Contradictions: card => `${card.title} appears when a doctrine grows too comfortable, turning its sharpest premise against itself. ${suitLore[card.suit]}`,
-  Dreams: card => `${card.title} visits without invitation, rearranging familiar symbols until the seeker's strongest belief is revealed.`,
-  Echoes: card => `${card.title} returns from an earlier step, weaker than memory but no less capable of changing the road ahead.`,
-  "Advance cards": card => `${card.title} restores discipline to the body and clarity to the will, carrying the seeker forward along the Ribbon.`,
-  "Retreat cards": card => `${card.title} makes surrender feel briefly reasonable; the road folds backward while the comfort lasts.`,
-  "Rest cards": card => `${card.title} asks for neither triumph nor sacrifice, only a pause in which the seeker may become present again.`,
-  "Loss cards": card => `${card.title} marks the moment when the ${titleCase(card.suit)} loosen their hold and a familiar certainty falls away. ${suitLore[card.suit]}`,
-  Dilemmas: card => `${card.title} seals the path until the seeker commits a card—and accepts that every answer preserves one value by wounding another.`
-};
-cards.forEach(card => { card.description = familyLore[card.type](card); });
+const descriptionKey = value => value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+function readGameConstant(source, name) {
+  const marker = `const ${name} =`;
+  const start = source.indexOf(marker);
+  if (start < 0) return null;
+  const searchStart = start + marker.length;
+  const relativeStart = source.slice(searchStart).search(/[\[{]/);
+  const valueStart = relativeStart < 0 ? -1 : searchStart + relativeStart;
+  if (valueStart < 0) return null;
+  const opening = source[valueStart];
+  const closing = opening === "{" ? "}" : "]";
+  let depth = 0;
+  let quote = "";
+  let escaped = false;
+  for (let index = valueStart; index < source.length; index += 1) {
+    const character = source[index];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === quote) quote = "";
+      continue;
+    }
+    if (character === '"' || character === "'" || character === "`") {
+      quote = character;
+      continue;
+    }
+    if (character === opening) depth += 1;
+    if (character === closing) depth -= 1;
+    if (depth === 0) return Function(`"use strict"; return (${source.slice(valueStart, index + 1)});`)();
+  }
+  return null;
+}
+
+async function applyGameDescriptions() {
+  const source = await fetch("../game.js").then(response => {
+    if (!response.ok) throw new Error(`Could not load game descriptions (${response.status})`);
+    return response.text();
+  });
+  const descriptions = new Map();
+  const remember = (title, description) => {
+    if (title && description) descriptions.set(descriptionKey(title), description);
+  };
+
+  const cardDescriptions = readGameConstant(source, "CARD_DESCRIPTIONS");
+  cards.filter(card => card.type === "Ranked cards").forEach(card => {
+    const rank = Number(card.rank.replace("Rank ", ""));
+    card.description = cardDescriptions?.[card.suit]?.[rank] || "";
+  });
+
+  readGameConstant(source, "STRANGERS").forEach(entry => remember(entry.name, entry.intro));
+  readGameConstant(source, "SAGES").forEach(entry => remember(entry.name, entry.intro));
+  ["RELICS", "TEXTS", "TEMPTATIONS", "CONTRADICTIONS"].forEach(name => {
+    readGameConstant(source, name).forEach(entry => remember(entry.title, entry.description));
+  });
+  ["DREAMS", "ECHOES", "ADVANCE_FLAVORS", "RETREAT_FLAVORS", "REST_FLAVORS"].forEach(name => {
+    readGameConstant(source, name).forEach(([title, description]) => remember(title, description));
+  });
+  Object.values(readGameConstant(source, "LOSE_FLAVORS")).flat().forEach(([title, description]) => remember(title, description));
+  Object.values(readGameConstant(source, "DILEMMAS")).flat().forEach(entry => remember(entry.title, entry.description));
+
+  cards.filter(card => card.type !== "Ranked cards").forEach(card => {
+    card.description = descriptions.get(descriptionKey(card.title)) || "";
+  });
+}
 
 const typeOrder=["Ranked cards","Sages","Strangers","Relics","Texts","Temptations","Contradictions","Dreams","Echoes","Advance cards","Retreat cards","Rest cards","Loss cards","Dilemmas"];
 let activeType="all",activeSuit="all",visible=[];
 const gallery=document.querySelector("#gallery"),count=document.querySelector("#result-count"),empty=document.querySelector("#empty-state"),dialog=document.querySelector("#viewer");
 function makeFilters(target,values,kind){const node=document.querySelector(target);["all",...values].forEach(value=>{const b=document.createElement("button");b.textContent=value==="all"?`All ${kind}s`:titleCase(value);b.dataset.value=value;b.setAttribute("aria-pressed",value==="all");b.onclick=()=>{if(kind==="type")activeType=value;else activeSuit=value;node.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));render()};node.append(b)})}
 makeFilters("#type-filters",typeOrder,"type");makeFilters("#suit-filters",["orbs","daggers","abysses","candles","neutral"],"suit");
-function render(){visible=cards.filter(c=>(activeType==="all"||c.type===activeType)&&(activeSuit==="all"||c.suit===activeSuit));gallery.innerHTML="";typeOrder.forEach(type=>{const group=visible.filter(c=>c.type===type);if(!group.length)return;const section=document.createElement("section");section.className="gallery-section";section.innerHTML=`<header class="section-heading"><h2>${type}</h2><span>${group.length} works</span></header><div class="card-grid"></div>`;const grid=section.querySelector(".card-grid");group.forEach(card=>{const button=document.createElement("button");button.className="card";button.innerHTML=`<div class="art"><img src="${card.src}" alt="${card.title}" loading="lazy"></div><div class="card-copy"><strong>${card.title}</strong><span>${titleCase(card.suit)}${card.rank?` · ${card.rank}`:""}</span><p>${card.description}</p></div>`;button.onclick=()=>openCard(card);grid.append(button)});gallery.append(section)});count.textContent=`${visible.length} of ${cards.length} works`;empty.hidden=visible.length>0}
+function render(){visible=cards.filter(c=>(activeType==="all"||c.type===activeType)&&(activeSuit==="all"||c.suit===activeSuit));gallery.innerHTML="";typeOrder.forEach(type=>{const group=visible.filter(c=>c.type===type);if(!group.length)return;const section=document.createElement("section");section.className="gallery-section";section.innerHTML=`<header class="section-heading"><h2>${type}</h2><span>${group.length} works</span></header><div class="card-grid"></div>`;const grid=section.querySelector(".card-grid");group.forEach(card=>{const button=document.createElement("button");button.className="card";button.innerHTML=`<div class="art"><img src="${card.src}" alt="${card.title}" loading="lazy"></div><div class="card-copy"><strong>${card.title}</strong><span>${titleCase(card.suit)}${card.rank?` · ${card.rank}`:""}</span>${card.description?`<p>${card.description}</p>`:""}</div>`;button.onclick=()=>openCard(card);grid.append(button)});gallery.append(section)});count.textContent=`${visible.length} of ${cards.length} works`;empty.hidden=visible.length>0}
 function openCard(card){dialog.dataset.index=visible.indexOf(card);document.querySelector("#viewer-image").src=card.src;document.querySelector("#viewer-image").alt=card.title;document.querySelector("#viewer-title").textContent=card.title;document.querySelector("#viewer-meta").textContent=`${card.type} · ${titleCase(card.suit)}${card.rank?` · ${card.rank}`:""}`;document.querySelector("#viewer-description").textContent=card.description;dialog.showModal()}
-function move(delta){const i=(Number(dialog.dataset.index)+delta+visible.length)%visible.length;openCard(visible[i])}document.querySelector(".close").onclick=()=>dialog.close();document.querySelector(".previous").onclick=()=>move(-1);document.querySelector(".next").onclick=()=>move(1);dialog.onclick=e=>{if(e.target===dialog)dialog.close()};addEventListener("keydown",e=>{if(!dialog.open)return;if(e.key==="ArrowLeft")move(-1);if(e.key==="ArrowRight")move(1)});render();
+function move(delta){const i=(Number(dialog.dataset.index)+delta+visible.length)%visible.length;openCard(visible[i])}document.querySelector(".close").onclick=()=>dialog.close();document.querySelector(".previous").onclick=()=>move(-1);document.querySelector(".next").onclick=()=>move(1);dialog.onclick=e=>{if(e.target===dialog)dialog.close()};addEventListener("keydown",e=>{if(!dialog.open)return;if(e.key==="ArrowLeft")move(-1);if(e.key==="ArrowRight")move(1)});applyGameDescriptions().catch(error=>console.error(error)).finally(render);

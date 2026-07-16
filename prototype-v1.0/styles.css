@@ -5580,7 +5580,9 @@ h2,
   place-items: center;
   justify-self: center !important;
   align-self: center !important;
-  width: min(760px, 72vw);
+  width: clamp(500px, 52vw, 960px);
+  max-width: calc(100vw - 48px);
+  container-type: inline-size;
   margin: 0;
   pointer-events: auto;
 }
@@ -5611,6 +5613,8 @@ h2,
 }
 
 .lf-game-screen .lf-stage .threshold-action {
+  --threshold-tip: clamp(38px, 7.5cqi, 64px);
+  --threshold-inset: clamp(24px, 4.5cqi, 43px);
   position: relative;
   isolation: isolate;
   display: grid;
@@ -5618,9 +5622,10 @@ h2,
   justify-items: center;
   align-content: center;
   gap: 7px;
-  min-width: clamp(500px, 43vw, 800px);
-  min-height: clamp(128px, 14vh, 168px);
-  padding: 18px clamp(72px, 7vw, 124px) 20px;
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(112px, 18cqi, 168px);
+  padding: clamp(14px, 2.4cqi, 20px) clamp(52px, 11cqi, 112px);
   overflow: visible;
   color: #f4dfb4;
   background:
@@ -5630,7 +5635,7 @@ h2,
     repeating-linear-gradient(90deg, rgba(255, 247, 218, 0.045) 0 1px, transparent 1px 34px),
     #101114;
   border: 1px solid rgba(230, 205, 142, 0.9);
-  clip-path: polygon(58px 0, calc(100% - 58px) 0, 100% 50%, calc(100% - 58px) 100%, 58px 100%, 0 50%);
+  clip-path: polygon(var(--threshold-tip) 0, calc(100% - var(--threshold-tip)) 0, 100% 50%, calc(100% - var(--threshold-tip)) 100%, var(--threshold-tip) 100%, 0 50%);
   box-shadow:
     inset 0 0 0 1px rgba(255, 247, 218, 0.13),
     inset 0 0 0 7px rgba(214, 192, 139, 0.035),
@@ -5639,7 +5644,7 @@ h2,
     0 0 48px rgba(214, 192, 139, 0.24),
     0 30px 76px rgba(0, 0, 0, 0.66);
   font-family: "Book Antiqua", "Palatino Linotype", "Cormorant Garamond", "Cinzel", Georgia, serif;
-  font-size: clamp(1.85rem, 2.55vw, 3.2rem);
+  font-size: clamp(1.72rem, 5.35cqi, 3.2rem);
   font-style: normal;
   font-variant: small-caps;
   font-weight: 600;
@@ -5661,7 +5666,7 @@ h2,
 }
 
 .lf-game-screen .lf-stage .threshold-action::before {
-  inset: 12px 34px;
+  inset: clamp(9px, 1.55cqi, 13px) var(--threshold-inset);
   border-top: 1px solid rgba(255, 237, 185, 0.42);
   border-bottom: 1px solid rgba(255, 237, 185, 0.28);
   background:
@@ -5698,7 +5703,10 @@ h2,
 .lf-game-screen .lf-stage .threshold-label {
   position: relative;
   z-index: 1;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 2cqi, 18px);
+  width: 100%;
   color: #f7e7c0;
   font-size: 1em;
   transform: translateY(0);
@@ -5707,10 +5715,11 @@ h2,
 .lf-game-screen .lf-stage .threshold-label::before,
 .lf-game-screen .lf-stage .threshold-label::after {
   content: "";
-  display: inline-block;
-  width: clamp(22px, 2.7vw, 44px);
+  display: block;
+  flex: 1 1 0;
+  width: auto;
   height: 1px;
-  margin: 0 16px 0.28em;
+  margin: 0;
   background: linear-gradient(90deg, transparent, rgba(255, 235, 182, 0.62), transparent);
 }
 
@@ -5751,10 +5760,12 @@ h2,
   .lf-game-screen .lf-stage .stage-copy .step-row,
   .lf-game-screen .lf-stage .stage-copy.has-event-art .step-row {
     width: min(520px, 84vw);
+    max-width: calc(100vw - 24px);
   }
 
   .lf-game-screen .lf-stage .threshold-action {
-    min-width: min(460px, 84vw);
+    --threshold-tip: clamp(28px, 8cqi, 38px);
+    min-width: 0;
     min-height: 104px;
     padding: 14px 42px 16px;
     font-size: clamp(1.42rem, 6.6vw, 2.15rem);
@@ -5763,7 +5774,7 @@ h2,
 
   .lf-game-screen .lf-stage .threshold-label::before,
   .lf-game-screen .lf-stage .threshold-label::after {
-    width: 18px;
-    margin-inline: 8px;
+    width: auto;
+    margin-inline: 0;
   }
 }
